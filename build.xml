@@ -1,0 +1,79 @@
+<project basedir="." default="build" name="EasyInject">
+	<property name="version" value="0.1" />
+	<!--   java源文件路径 -->
+	<property name="src.dir" value="${basedir}/src" />
+	<!--   jar包路径 -->
+	<property name="lib.dir" value="${basedir}/libs" />
+	<!--   准备源文件路径 -->
+	<property name="build.src" value="${basedir}/build/src" />
+	<!--   编译源文件路径 -->
+	<property name="build.dest" value="${basedir}/build/bin" />
+	<!--   打包jar文件路径 -->
+	<property name="jar.dest" value="${basedir}/build/" />
+	<!--   androidsdk路径 -->
+	<property name="androidSdk" value="E:/android-sdk" />
+	
+	<!--   classpath -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${androidSdk}/platforms/android-8">
+			<include name="**/android.jar"/>
+		</fileset>
+		<fileset dir="${androidSdk}/tools/support">
+			<include name="**/annotations.jar"/>
+		</fileset>
+	</path>
+	<filter token="log" value="true" />
+	<filter token="verbose" value="true" />
+	
+	<!-- =================================================================== -->
+	<!-- 清除临时文件-->
+	<!-- =================================================================== -->
+	<target name="clean">
+		<delete deleteonexit="true" dir="${build.src}"/>
+		<delete deleteonexit="true" dir="${build.dest}"/>
+	</target>
+	
+	<!-- =================================================================== -->
+	<!-- 初始化，创建目录-->
+	<!-- =================================================================== -->
+	<target name="init" depends="clean">
+		<mkdir dir="${build.src}"/>
+		<mkdir dir="${build.dest}"/>
+		<tstamp/>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- 准备源文件-->
+	<!-- =================================================================== -->
+	<target name="prepare-src" depends="init">
+		<!-- create directories -->
+		<mkdir dir="${build.src}" />
+		<mkdir dir="${build.dest}" />
+		<mkdir dir="${jar.dest}" />
+		<!-- copy src files -->
+		<copy todir="${build.src}">
+			<fileset dir="${src.dir}" />
+		</copy>
+		<!-- delete files -->
+		<delete deleteonexit="true" dir="${build.src}/com/tianyl/android/easyInjectDemo"/>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- 编译源文件-->
+	<!-- =================================================================== -->
+	<target name="build" depends="prepare-src">
+		<javac srcdir="${build.src}" destdir="${build.dest}" debug="${debug}" optimize="${optimize}" includeantruntime="on">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+	
+	<!-- =================================================================== -->
+	<!-- 打包为jar文件-->
+	<!-- =================================================================== -->
+	<target name="package" depends="build">
+		<jar destfile="${jar.dest}/EasyInject-${DSTAMP}.jar" basedir="${build.dest}"></jar>
+	</target>
+</project>
